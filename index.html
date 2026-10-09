@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLUNDERER · Signal Generator</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #0a0000;
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.bg-container {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 20%, #400000, transparent 40%),
+        radial-gradient(circle at 80% 80%, #500000, transparent 40%),
+        #0a0000;
+}
+
+.orb {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: #ff0000;
+    filter: blur(100px);
+    opacity: .15;
+    animation: move 15s infinite alternate ease-in-out;
+}
+
+.orb:nth-child(1) {
+    top: -100px;
+    left: -100px;
+}
+
+.orb:nth-child(2) {
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -5s;
+}
+
+.orb:nth-child(3) {
+    top: 40%;
+    left: 60%;
+    opacity: .08;
+    animation-delay: -8s;
+}
+
+@keyframes move {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(100px, 80px) scale(1.3); }
+}
+
+#main-content {
+    position: relative;
+    max-width: 750px;
+    width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.main-logo {
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: 7px;
+    text-align: center;
+    margin-bottom: 5px;
+    text-shadow: 0 0 30px rgba(255, 0, 0, .5);
+}
+
+.main-logo span {
+    color: #ff1a1a;
+}
+
+.main-sub {
+    text-align: center;
+    color: #ff4444;
+    font-size: 12px;
+    letter-spacing: 5px;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 0, 0, .2);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    color: #ddd;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(0, 0, 0, .6);
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #ff3333;
+    box-shadow: 0 0 15px rgba(255, 0, 0, .15);
+}
+
+.form-group select option {
+    background: #111;
+    color: #fff;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.btn {
+    flex: 1 1 140px;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn:hover {
+    transform: scale(1.03);
+}
+
+.btn-generate {
+    background: #e60000;
+    color: #fff;
+    box-shadow: 0 0 25px rgba(255, 0, 0, .2);
+}
+
+.btn-copy {
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .15);
+    color: #eee;
+}
+
+.btn-whatsapp {
+    background: #168c45;
+    color: #fff;
+}
+
+.generated-box {
+    display: none;
+    background: rgba(0, 0, 0, .55);
+    border: 1px solid rgba(255, 0, 0, .2);
+    border-radius: 15px;
+    padding: 18px;
+    margin-top: 20px;
+    overflow-wrap: anywhere;
+}
+
+.generated-box.visible {
+    display: block;
+}
+
+.msg-title {
+    color: #ff5555;
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
+
+.msg-content {
+    color: #eee;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.status-text {
+    color: #aaa;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 12px;
+    min-height: 18px;
+}
+
+.footer-link {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 0, 0, .15);
+}
+
+.footer-link a {
+    color: #ff5555;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    #main-content {
+        padding: 12px;
+        margin: 5px auto;
+    }
+
+    .main-logo {
+        font-size: 29px;
+        letter-spacing: 4px;
+    }
+
+    .main-sub {
+        font-size: 10px;
+        letter-spacing: 3px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-container">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<audio id="bg-music" loop>
+    <source src="song.mp3.m4a" type="audio/mp4">
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<main id="main-content">
+
+    <h1 class="main-logo">P<span>L</span>UNDERER</h1>
+    <div class="main-sub">SIGNAL GENERATOR</div>
+
+    <div class="form-group">
+        <label for="message-type">TYPE DE MESSAGE</label>
+        <select id="message-type">
+            <option value="support">Demande d'assistance</option>
+            <option value="appeal">Demande de réexamen</option>
+            <option value="report">Signalement</option>
+            <option value="custom">Message personnalisé</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="platform">PLATEFORME</label>
+        <select id="platform">
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Autre plateforme">Autre plateforme</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="phone">NUMÉRO OU IDENTIFIANT (FACULTATIF)</label>
+        <input id="phone" type="text" placeholder="Saisir le numéro ou l'identifiant">
+    </div>
+
+    <div class="form-group">
+        <label for="details">DÉTAILS DE LA DEMANDE</label>
+        <textarea id="details" placeholder="Explique ta situation ici..."></textarea>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-generate" id="generate-btn">
+            GÉNÉRER
+        </button>
+
+        <button class="btn btn-copy" id="copy-btn" disabled>
+            COPIER
+        </button>
+
+        <button class="btn btn-whatsapp" id="share-btn" disabled>
+            PARTAGER
+        </button>
+    </div>
+
+    <div class="generated-box" id="generated-box">
+        <div class="msg-title">MESSAGE GÉNÉRÉ</div>
+        <div class="msg-content" id="msg-content"></div>
+    </div>
+
+    <div class="status-text" id="status-text" aria-live="polite"></div>
+
+    <div class="footer-link">
+        <a href="#" id="music-toggle">ACTIVER / COUPER LA MUSIQUE</a>
+    </div>
+
+</main>
+
+<script>
+const typeInput = document.getElementById('message-type');
+const platformInput = document.getElementById('platform');
+const phoneInput = document.getElementById('phone');
+const detailsInput = document.getElementById('details');
+
+const generateBtn = document.getElementById('generate-btn');
+const copyBtn = document.getElementById('copy-btn');
+const shareBtn = document.getElementById('share-btn');
+
+const generatedBox = document.getElementById('generated-box');
+const msgContent = document.getElementById('msg-content');
+const statusText = document.getElementById('status-text');
+
+let generatedMessage = '';
+
+function generateMessage() {
+    const type = typeInput.value;
+    const platform = platformInput.value;
+    const phone = phoneInput.value.trim();
+    const details = detailsInput.value.trim();
+
+    let message = '';
+
+    if (type === 'support') {
+        message =
+`Bonjour l'équipe d'assistance ${platform},
+
+Je vous contacte afin d'obtenir de l'aide concernant ma situation${phone ? ' liée au numéro ou identifiant ' + phone : ''}.
+
+${details || 'Pourriez-vous examiner ma demande et m’indiquer les démarches à suivre, s’il vous plaît ?'}
+
+Merci pour votre temps et votre aide.
+
+Cordialement.`;
+    }
+
+    else if (type === 'appeal') {
+        message =
+`Bonjour l'équipe d'assistance ${platform},
+
+Je souhaite demander un réexamen de ma situation${phone ? ' concernant le numéro ou identifiant ' + phone : ''}.
+
+${details || 'Je vous serais reconnaissant de bien vouloir vérifier mon dossier et de me communiquer votre décision.'}
+
+Je vous remercie de prendre le temps d'étudier ma demande.
+
+Cordialement.`;
+    }
+
+    else if (type === 'report') {
+        message =
+`Bonjour l'équipe de modération ${platform},
+
+Je souhaite vous signaler un contenu ou un compte qui mérite d'être examiné${phone ? ' : ' + phone : '.'}
+
+${details || 'Je vous invite à vérifier les éléments signalés et à prendre les mesures appropriées si une violation des règles est constatée.'}
+
+Merci de votre attention.
+
+Cordialement.`;
+    }
+
+    else {
+        message = details ||
+            'Veuillez saisir les détails de votre message avant de le générer.';
+    }
+
+    generatedMessage = message;
+    msgContent.textContent = message;
+    generatedBox.classList.add('visible');
+
+    const hasMessage = Boolean(details || type !== 'custom');
+
+    copyBtn.disabled = !hasMessage;
+    shareBtn.disabled = !hasMessage;
+
+    statusText.textContent = hasMessage
+        ? 'Message généré avec succès.'
+        : 'Saisis ton message personnalisé.';
+}
+
+generateBtn.addEventListener('click', generateMessage);
+
+copyBtn.addEventListener('click', async () => {
+    if (!generatedMessage) return;
+
+    try {
+        await navigator.clipboard.writeText(generatedMessage);
+        statusText.textContent = 'Message copié.';
+    } catch (error) {
+        const textArea = document.createElement('textarea');
+        textArea.value = generatedMessage;
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        const copied = document.execCommand('copy');
+        textArea.remove();
+
+        statusText.textContent = copied
+            ? 'Message copié.'
+            : 'Copie impossible. Sélectionne le texte manuellement.';
+    }
+});
+
+shareBtn.addEventListener('click', () => {
+    if (!generatedMessage) return;
+
+    const url =
+        'https://wa.me/?text=' +
+        encodeURIComponent(generatedMessage);
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+});
+
+const music = document.getElementById('bg-music');
+const musicToggle = document.getElementById('music-toggle');
+
+musicToggle.addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    if (music.paused) {
+        try {
+            await music.play();
+            statusText.textContent = 'Musique activée.';
+        } catch (error) {
+            statusText.textContent =
+                'Lecture impossible. Vérifie le fichier audio.';
+        }
+    } else {
+        music.pause();
+        statusText.textContent = 'Musique coupée.';
+    }
+});
+</script>
+
+</body>
+  </html>
